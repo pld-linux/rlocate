@@ -1,7 +1,7 @@
 #
 # TODO:
 # - cleanups, fix build, test... everything...
-#
+# - device: /dev/rlocate
 
 %bcond_without  dist_kernel     # allow non-distribution kernel
 %bcond_without  kernel          # don't build kernel modules
@@ -12,7 +12,8 @@
 Summary:	Finds files on a system via a central database
 Name:		rlocate
 Version:	0.2.1
-Release:	0.0.1
+%define         _rel 0.1
+Release:	%{_rel}
 License:	GPL
 Group:		Base
 Source0:	http://dl.sourceforge.net/rlocate/%{name}-%{version}.tar.gz
@@ -204,9 +205,12 @@ fi
 %endif
 %endif
 
-
 %files
 %defattr(644,root,root,755)
+%attr(2755,root,slocate) /usr/sbin/rlocated
+%{_mandir}/man1/rlocate*
+%{_mandir}/man1/updatedb.*
+
 #doc AUTHORS ChangeLog README
 #attr(2755,root,rlocate) %{_bindir}/rlocate
 #attr(0755,root,root) %{_bindir}/locate
