@@ -82,11 +82,14 @@ Rlocate - це верс╕я locate з покращеною безпечн╕стю (вона не показу╓
 
 %build
 %if %{with userspace}
+%configure
+make -C rlocate-daemon
+make -C doc
 %endif
 
-%configure
 %if %{with kernel}
 # kernel module(s)
+cd rlocate-module
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
         if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
                 exit 1
@@ -97,9 +100,10 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
         ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
         ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
         touch include/config/MARKER
-#
-#       patching/creating makefile(s) (optional)
-#
+
+	echo "EXTRA_CFLAGS:= -DRL_VERSION=\\\"%{version}\\\" -DRLOCATE_UPDATES" > Makefile
+	echo "obj-m := rlocate.o" >> Makefile
+
         %{__make} -C %{_kernelsrcdir} clean \
                 RCS_FIND_IGNORE="-name '*.ko' -o" \
                 M=$PWD O=$PWD \
@@ -109,44 +113,45 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
                 M=$PWD O=$PWD \
                 %{?with_verbose:V=1}
 
-#	        mv rlocate{,-$cfg}.ko
+        mv rlocate{,-$cfg}.ko
 done
+cd ..
 %endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 
-%{__make} install \
-        DESTDIR=$RPM_BUILD_ROOT
-
-
 %if %{with userspace}
-
-
+%{__make} -C rlocate-daemon install \
+        DESTDIR=$RPM_BUILD_ROOT
+%{__make} -C doc install \
+        DESTDIR=$RPM_BUILD_ROOT
 %endif
 
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
+cd rlocate-module
 install rlocate-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
         $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/rlocate.ko
 %if %{with smp} && %{with dist_kernel}
 install rlocate-smp.ko \
         $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/rlocate.ko
 %endif
+cd ..
 %endif
 
 
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/cron.daily,/var/lib/rlocate}
 
-install rlocate $RPM_BUILD_ROOT%{_bindir}
+#install rlocate $RPM_BUILD_ROOT%{_bindir}
 ln -sf rlocate $RPM_BUILD_ROOT%{_bindir}/locate
 ln -sf rlocate $RPM_BUILD_ROOT%{_bindir}/updatedb
 
-install doc/rlocate.1.linux $RPM_BUILD_ROOT%{_mandir}/man1/rlocate.1
-install doc/updatedb.1 $RPM_BUILD_ROOT%{_mandir}/man1/updatedb.1
-echo ".so rlocate.1" > $RPM_BUILD_ROOT%{_mandir}/man1/locate.1
-install %{SOURCE1} $RPM_BUILD_ROOT/etc/cron.daily/rlocate
-install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/updatedb.conf
+#install doc/rlocate.1.linux $RPM_BUILD_ROOT%{_mandir}/man1/rlocate.1
+#install doc/updatedb.1 $RPM_BUILD_ROOT%{_mandir}/man1/updatedb.1
+#echo ".so rlocate.1" > $RPM_BUILD_ROOT%{_mandir}/man1/locate.1
+#install %{SOURCE1} $RPM_BUILD_ROOT/etc/cron.daily/rlocate
+#install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/updatedb.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -174,11 +179,11 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog README
-%attr(2755,root,rlocate) %{_bindir}/rlocate
-%attr(0755,root,root) %{_bindir}/locate
-%attr(0755,root,root) %{_bindir}/updatedb
-%attr(0750,root,root) /etc/cron.daily/rlocate
-%attr(0640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/updatedb.conf
-%dir %attr(750,root,rlocate) /var/lib/rlocate
-%{_mandir}/man1/*
+#doc AUTHORS ChangeLog README
+#attr(2755,root,rlocate) %{_bindir}/rlocate
+#attr(0755,root,root) %{_bindir}/locate
+#attr(0755,root,root) %{_bindir}/updatedb
+#attr(0750,root,root) /etc/cron.daily/rlocate
+#attr(0640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/updatedb.conf
+#dir %attr(750,root,rlocate) /var/lib/rlocate
+#{_mandir}/man1/*
