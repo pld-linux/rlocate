@@ -213,7 +213,7 @@ fi
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%attr(2755,root,slocate) /usr/sbin/rlocated
+%attr(2755,root,slocate) %{_sbindir}/rlocated
 %{_mandir}/man1/rlocate*
 %{_mandir}/man1/updatedb.*
 
