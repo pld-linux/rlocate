@@ -71,6 +71,48 @@ Rlocate - це верс╕я locate з покращеною безпечн╕стю (вона не показу╓
 даних (яка оновля╓ться, як правило, щоноч╕) файл╕в, що в╕дпов╕дають
 заданому шаблону.
 
+%package -n kernel-misc-%{name}
+Summary:	Linux driver for %{name}
+Summary(pl):	Sterownik dla Linuksa do %{name}
+Release:	%{_rel}@%{_kernel_ver_str}
+Group:		Base/Kernel
+Requires(post,postun):	/sbin/depmod
+%if %{with dist_kernel}
+%requires_releq_kernel_up
+Requires(postun):	%releq_kernel_up
+%endif
+
+%description -n kernel-misc-%{name}
+This is driver for %{name} for Linux.
+
+This package contains Linux module.
+
+%description -n kernel-misc-%{name} -l pl
+Sterownik dla Linuksa do %{name}.
+
+Ten pakiet zawiera moduЁ j╠dra Linuksa.
+
+%package -n kernel-smp-misc-%{name}
+Summary:	Linux SMP driver for %{name}
+Summary(pl):	Sterownik dla Linuksa SMP do %{name}
+Release:	%{_rel}@%{_kernel_ver_str}
+Group:		Base/Kernel
+Requires(post,postun):	/sbin/depmod
+%if %{with dist_kernel}
+%requires_releq_kernel_smp
+Requires(postun):	%releq_kernel_smp
+%endif
+
+%description -n kernel-smp-misc-%{name}
+This is driver for %{name} for Linux.
+
+This package contains Linux SMP module.
+
+%description -n kernel-smp-misc-%{name} -l pl
+Sterownik dla Linuksa do %{name}.
+
+Ten pakiet zawiera moduЁ j╠dra Linuksa SMP.
+
 %prep
 %setup -q
 #%patch0 -p1
@@ -176,6 +218,19 @@ fi
 if [ "$1" = "0" ]; then
 	%groupremove rlocate
 fi
+
+%if %{with kernel}
+%files -n kernel-misc-%{name}
+%defattr(644,root,root,755)
+/lib/modules/%{_kernel_ver}/misc/*.ko*
+
+%if %{with smp} && %{with dist_kernel}
+%files -n kernel-smp-misc-%{name}
+%defattr(644,root,root,755)
+/lib/modules/%{_kernel_ver}smp/misc/*.ko*
+%endif
+%endif
+
 
 %files
 %defattr(644,root,root,755)
