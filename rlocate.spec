@@ -30,7 +30,7 @@ Source0:	http://dl.sourceforge.net/rlocate/%{name}-%{version}.tar.gz
 #Patch3:		%{name}-LOCATE_PATH.patch
 #Patch4:		%{name}-uchar.patch
 #Patch5:		%{name}-can-2003-0848.patch
-URL:		http://sourceforge.net/projects/rlocate/
+URL:		http://rlocate.sourceforge.net/
 BuildRequires:	rpmbuild(macros) >= 1.159
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
