@@ -174,13 +174,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre
 if [ -n "`/usr/bin/getgid rlocate`" ]; then
-	if [ "`/usr/bin/getgid rlocate`" != "21" ]; then
-		echo "Error: group rlocate doesn't have gid=21. Correct this before installing rlocate." 1>&2
+	if [ "`/usr/bin/getgid rlocate`" != "37" ]; then
+		echo "Error: group rlocate doesn't have gid=37. Correct this before installing rlocate." 1>&2
 		exit 1
 	fi
 else
-	echo "Adding group rlocate GID=21."
-	/usr/sbin/groupadd -g 21 rlocate 1>&2
+	echo "Adding group rlocate GID=37."
+	/usr/sbin/groupadd -g 37 rlocate 1>&2
 fi
 
 %post
