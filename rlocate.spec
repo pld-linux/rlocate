@@ -10,11 +10,6 @@
 %bcond_with     verbose         # verbose build (V=1)
 
 Summary:	Finds files on a system via a central database
-Summary(es):	Localiza archivos en un sistema por medio del banco central de datos
-Summary(pl):	NarzЙdzie do odnajdywania plikСw w systemie poprzez specjaln╠ bazЙ danych
-Summary(pt_BR):	Localiza arquivos em um sistema via um banco de dados central
-Summary(ru):	Поиск файлов в файловой системе при помощи центральной базы данных
-Summary(uk):	Пошук файл╕в в файлов╕й систем╕ за допомогою центрально╖ бази даних
 Name:		rlocate
 Version:	0.2.1
 Release:	0.0.1
@@ -31,6 +26,7 @@ Source0:	http://dl.sourceforge.net/rlocate/%{name}-%{version}.tar.gz
 #Patch4:		%{name}-uchar.patch
 #Patch5:		%{name}-can-2003-0848.patch
 URL:		http://rlocate.sourceforge.net/
+BuildRequires:	kernel-module-build >= 2.6
 BuildRequires:	rpmbuild(macros) >= 1.159
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -40,36 +36,13 @@ Provides:	group(rlocate)
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-Rlocate searches through a central database (updated nightly) for
-files which match a given glob pattern. This allows you to quickly
-find files anywhere on your system.
-
-%description -l es
-Localiza archivos en un sistema por medio del banco central de datos.
-
-%description -l pl
-Rlocate sЁu©y do szybkiego poszukiwania plikСw poprzez specjaln╠ bazЙ
-danych (aktualizowan╠ co noc). Umo©liwia tak©e szybkie odszukanie
-pliku wedЁug podanego wzoru w postaci wyra©enia regularnego.
-
-%description -l pt_BR
-O rlocate localiza arquivos em um sistema via um banco de dados
-central (Atualizado toda madrugada). Isto permite a vocЙ localizar
-rapidamente arquivos em qualquer parte do seu sistema.
-
-%description -l ru
-Rlocate - это версия locate с улучшенной безопасностью (она не
-показывает имена файлов, которые вы не могли бы узнать просмотром
-файловой системы). как и locate, rlocate производит поиск в
-центральной базе данных (которая обновляется, как правило, еженощно)
-файлов, отвечающих заданному шаблону.
-
-%description -l uk
-Rlocate - це верс╕я locate з покращеною безпечн╕стю (вона не показу╓
-╕мена файл╕в, як╕ ви не змогли б д╕знатися переглядом файлово╖
-системи). Як ╕ locate, rlocate проводить пошук в центральн╕й баз╕
-даних (яка оновля╓ться, як правило, щоноч╕) файл╕в, що в╕дпов╕дають
-заданому шаблону.
+rlocate is an implementation of the ``locate'' command that is always
+up-to-date. The database that the original locate uses is usually
+updated only once a day, so newer files cannot be located right away.
+The behavior of rlocate is the same as slocate, but it also maintains
+a diff database that gets updated whenever a new file is created. This
+is accomplished with rlocate kernel module and daemon. The rlocate
+kernel module can be compiled only with Linux 2.6 kernels.
 
 %package -n kernel-misc-%{name}
 Summary:	Linux driver for %{name}
@@ -144,7 +117,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
         touch include/config/MARKER
 
 	echo "EXTRA_CFLAGS:= -DRL_VERSION=\\\"%{version}\\\" -DRLOCATE_UPDATES" > Makefile
-	echo "obj-m := rlocate.o" >> Makefile
+	echo "obj-m:= rlocate.o" >> Makefile
 
         %{__make} -C %{_kernelsrcdir} clean \
                 RCS_FIND_IGNORE="-name '*.ko' -o" \
