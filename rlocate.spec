@@ -2,14 +2,16 @@
 # TODO:
 # - cleanups, fix build, test... everything...
 # - device: /dev/rlocate
-
+#
+# Conditional build:
 %bcond_without  dist_kernel     # allow non-distribution kernel
 %bcond_without  kernel          # don't build kernel modules
 %bcond_without  smp             # don't build SMP module
 %bcond_without  userspace       # don't build userspace module
 %bcond_with     verbose         # verbose build (V=1)
-
+#
 Summary:	Finds files on a system via a central database
+Summary(pl):	Szukanie plików w systemie poprzez centraln± bazê danych
 Name:		rlocate
 Version:	0.2.1
 %define         _rel 0.1
@@ -27,7 +29,9 @@ Source0:	http://dl.sourceforge.net/rlocate/%{name}-%{version}.tar.gz
 #Patch4:		%{name}-uchar.patch
 #Patch5:		%{name}-can-2003-0848.patch
 URL:		http://rlocate.sourceforge.net/
+%if %{with kernel} && %{with dist_kernel}
 BuildRequires:	kernel-module-build >= 2.6
+%endif
 BuildRequires:	rpmbuild(macros) >= 1.159
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -45,9 +49,19 @@ a diff database that gets updated whenever a new file is created. This
 is accomplished with rlocate kernel module and daemon. The rlocate
 kernel module can be compiled only with Linux 2.6 kernels.
 
+%description -l pl
+rlocate to implementacja polecenia locate bêd±ca zawsze aktualna. Baza
+danych u¿ywana przez oryginalne polecenie locate jest zwykle
+uaktualniana raz dziennie, wiêc nowszych plików nie mo¿na znale¼æ w
+ten sposób. Zachowanie rlocate jest takie samo jak slocate, ale
+rlocate dodatkowo utrzymuje bazê danych ró¿nic uaktualnian± przy
+tworzeniu ka¿dego nowego pliku. Jest to osi±gniête przy u¿yciu modu³u
+j±dra i demona rlocate. Modu³ j±dra mo¿na skompilowaæ tylko na j±drach
+Linuksa 2.6.
+
 %package -n kernel-misc-%{name}
-Summary:	Linux driver for %{name}
-Summary(pl):	Sterownik dla Linuksa do %{name}
+Summary:	rlocate Linux module
+Summary(pl):	Modu³ rlocate dla Linuksa
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -57,18 +71,14 @@ Requires(postun):	%releq_kernel_up
 %endif
 
 %description -n kernel-misc-%{name}
-This is driver for %{name} for Linux.
-
-This package contains Linux module.
+This package contains rlocate Linux module.
 
 %description -n kernel-misc-%{name} -l pl
-Sterownik dla Linuksa do %{name}.
-
-Ten pakiet zawiera modu³ j±dra Linuksa.
+Ten pakiet zawiera modu³ rlocate dla j±dra Linuksa.
 
 %package -n kernel-smp-misc-%{name}
-Summary:	Linux SMP driver for %{name}
-Summary(pl):	Sterownik dla Linuksa SMP do %{name}
+Summary:	rlocate Linux SMP module
+Summary(pl):	Modu³ rlocate dla Linuksa SMP
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -78,14 +88,10 @@ Requires(postun):	%releq_kernel_smp
 %endif
 
 %description -n kernel-smp-misc-%{name}
-This is driver for %{name} for Linux.
-
-This package contains Linux SMP module.
+This package contains rlocate Linux SMP module.
 
 %description -n kernel-smp-misc-%{name} -l pl
-Sterownik dla Linuksa do %{name}.
-
-Ten pakiet zawiera modu³ j±dra Linuksa SMP.
+Ten pakiet zawiera modu³ rlocate dla j±dra Linuksa SMP.
 
 %prep
 %setup -q
@@ -99,8 +105,8 @@ Ten pakiet zawiera modu³ j±dra Linuksa SMP.
 %build
 %if %{with userspace}
 %configure
-make -C rlocate-daemon
-make -C doc
+%{__make} -C rlocate-daemon
+%{__make} -C doc
 %endif
 
 %if %{with kernel}
@@ -142,6 +148,18 @@ rm -rf $RPM_BUILD_ROOT
         DESTDIR=$RPM_BUILD_ROOT
 %{__make} -C doc install \
         DESTDIR=$RPM_BUILD_ROOT
+
+install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/cron.daily,/var/lib/rlocate}
+
+#install rlocate $RPM_BUILD_ROOT%{_bindir}
+ln -sf rlocate $RPM_BUILD_ROOT%{_bindir}/locate
+ln -sf rlocate $RPM_BUILD_ROOT%{_bindir}/updatedb
+
+#install doc/rlocate.1.linux $RPM_BUILD_ROOT%{_mandir}/man1/rlocate.1
+#install doc/updatedb.1 $RPM_BUILD_ROOT%{_mandir}/man1/updatedb.1
+#echo ".so rlocate.1" > $RPM_BUILD_ROOT%{_mandir}/man1/locate.1
+#install %{SOURCE1} $RPM_BUILD_ROOT/etc/cron.daily/rlocate
+#install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/updatedb.conf
 %endif
 
 %if %{with kernel}
@@ -155,19 +173,6 @@ install rlocate-smp.ko \
 %endif
 cd ..
 %endif
-
-
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/cron.daily,/var/lib/rlocate}
-
-#install rlocate $RPM_BUILD_ROOT%{_bindir}
-ln -sf rlocate $RPM_BUILD_ROOT%{_bindir}/locate
-ln -sf rlocate $RPM_BUILD_ROOT%{_bindir}/updatedb
-
-#install doc/rlocate.1.linux $RPM_BUILD_ROOT%{_mandir}/man1/rlocate.1
-#install doc/updatedb.1 $RPM_BUILD_ROOT%{_mandir}/man1/updatedb.1
-#echo ".so rlocate.1" > $RPM_BUILD_ROOT%{_mandir}/man1/locate.1
-#install %{SOURCE1} $RPM_BUILD_ROOT/etc/cron.daily/rlocate
-#install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/updatedb.conf
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -205,6 +210,7 @@ fi
 %endif
 %endif
 
+%if %{with userspace}
 %files
 %defattr(644,root,root,755)
 %attr(2755,root,slocate) /usr/sbin/rlocated
@@ -219,3 +225,4 @@ fi
 #attr(0640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/updatedb.conf
 #dir %attr(750,root,rlocate) /var/lib/rlocate
 #{_mandir}/man1/*
+%endif
