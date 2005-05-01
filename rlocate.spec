@@ -32,7 +32,7 @@ URL:		http://rlocate.sourceforge.net/
 %if %{with kernel} && %{with dist_kernel}
 BuildRequires:	kernel-module-build >= 2.6
 %endif
-BuildRequires:	rpmbuild(macros) >= 1.159
+BuildRequires:	rpmbuild(macros) >= 1.202
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(postun):	/usr/sbin/groupdel
@@ -178,15 +178,7 @@ cd ..
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ -n "`/usr/bin/getgid rlocate`" ]; then
-	if [ "`/usr/bin/getgid rlocate`" != "37" ]; then
-		echo "Error: group rlocate doesn't have gid=37. Correct this before installing rlocate." 1>&2
-		exit 1
-	fi
-else
-	echo "Adding group rlocate GID=37."
-	/usr/sbin/groupadd -g 37 rlocate 1>&2
-fi
+%groupadd -g 37 rlocate
 
 %post
 if [ ! -f /var/lib/rlocate/rlocate.db ]; then
