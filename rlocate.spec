@@ -4,17 +4,17 @@
 # - device: /dev/rlocate
 #
 # Conditional build:
-%bcond_without  dist_kernel     # allow non-distribution kernel
-%bcond_without  kernel          # don't build kernel modules
-%bcond_without  smp             # don't build SMP module
-%bcond_without  userspace       # don't build userspace module
-%bcond_with     verbose         # verbose build (V=1)
+%bcond_without	dist_kernel	# allow non-distribution kernel
+%bcond_without	kernel		# don't build kernel modules
+%bcond_without	smp		# don't build SMP module
+%bcond_without	userspace	# don't build userspace module
+%bcond_with	verbose		# verbose build (V=1)
 #
 Summary:	Finds files on a system via a central database
 Summary(pl):	Szukanie plików w systemie poprzez centraln± bazê danych
 Name:		rlocate
 Version:	0.2.2
-%define         _rel 0.1
+%define		_rel	0.1
 Release:	%{_rel}
 License:	GPL
 Group:		Base
@@ -113,29 +113,29 @@ Ten pakiet zawiera modu³ rlocate dla j±dra Linuksa SMP.
 # kernel module(s)
 cd rlocate-module
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-        if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-                exit 1
-        fi
-        rm -rf include
-        install -d include/{linux,config}
-        ln -sf %{_kernelsrcdir}/config-$cfg .config
-        ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
-        ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
-        touch include/config/MARKER
+	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+		exit 1
+	fi
+	rm -rf include
+	install -d include/{linux,config}
+	ln -sf %{_kernelsrcdir}/config-$cfg .config
+	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+	touch include/config/MARKER
 
 	echo "EXTRA_CFLAGS:= -DRL_VERSION=\\\"%{version}\\\" -DRLOCATE_UPDATES" > Makefile
 	echo "obj-m:= rlocate.o" >> Makefile
 
-        %{__make} -C %{_kernelsrcdir} clean \
-                RCS_FIND_IGNORE="-name '*.ko' -o" \
-                M=$PWD O=$PWD \
-                %{?with_verbose:V=1}
-        %{__make} -C %{_kernelsrcdir} modules \
-                CC="%{__cc}" CPP="%{__cpp}" \
-                M=$PWD O=$PWD \
-                %{?with_verbose:V=1}
+	%{__make} -C %{_kernelsrcdir} clean \
+		RCS_FIND_IGNORE="-name '*.ko' -o" \
+		M=$PWD O=$PWD \
+		%{?with_verbose:V=1}
+	%{__make} -C %{_kernelsrcdir} modules \
+		CC="%{__cc}" CPP="%{__cpp}" \
+		M=$PWD O=$PWD \
+		%{?with_verbose:V=1}
 
-        mv rlocate{,-$cfg}.ko
+	mv rlocate{,-$cfg}.ko
 done
 cd ..
 %endif
@@ -145,9 +145,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %if %{with userspace}
 %{__make} -C rlocate-daemon install \
-        DESTDIR=$RPM_BUILD_ROOT
+	DESTDIR=$RPM_BUILD_ROOT
 %{__make} -C doc install \
-        DESTDIR=$RPM_BUILD_ROOT
+	DESTDIR=$RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/cron.daily,/var/lib/rlocate}
 
@@ -166,10 +166,10 @@ ln -sf rlocate $RPM_BUILD_ROOT%{_bindir}/updatedb
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/misc
 cd rlocate-module
 install rlocate-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
-        $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/rlocate.ko
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/misc/rlocate.ko
 %if %{with smp} && %{with dist_kernel}
 install rlocate-smp.ko \
-        $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/rlocate.ko
+	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/rlocate.ko
 %endif
 cd ..
 %endif
