@@ -32,6 +32,7 @@ URL:		http://rlocate.sourceforge.net/
 %if %{with kernel} && %{with dist_kernel}
 BuildRequires:	kernel-module-build >= 2.6
 %endif
+BuildRequires:	perl-base
 BuildRequires:	rpmbuild(macros) >= 1.202
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
