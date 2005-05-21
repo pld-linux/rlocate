@@ -23,12 +23,12 @@ Source0:	http://dl.sourceforge.net/rlocate/%{name}-%{version}.tar.gz
 # Source0-md5:	744be608526d1e4572ed5287ce6699ce
 Patch0:		%{name}-build.patch
 URL:		http://rlocate.sourceforge.net/
-BuildRequires:	automake
 BuildRequires:	autoconf
-BuildRequires:	libtool
+BuildRequires:	automake
 %if %{with kernel} && %{with dist_kernel}
 BuildRequires:	kernel-module-build >= 2.6
 %endif
+BuildRequires:	libtool
 BuildRequires:	perl-base
 BuildRequires:	rpmbuild(macros) >= 1.202
 Requires(pre):	/usr/bin/getgid
