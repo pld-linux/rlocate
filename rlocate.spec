@@ -14,14 +14,13 @@ Summary:	Finds files on a system via a central database
 Summary(pl):	Szukanie plików w systemie poprzez centraln± bazê danych
 Name:		rlocate
 Version:	0.2.4
-%define		_rel	0.13
+%define		_rel	0.14
 Release:	%{_rel}
 License:	GPL
 Group:		Base
 Source0:	http://dl.sourceforge.net/rlocate/%{name}-%{version}.tar.gz
 # Source0-md5:	744be608526d1e4572ed5287ce6699ce
 Patch0:		%{name}-build.patch
-Patch1:		%{name}-nokernel.patch
 URL:		http://rlocate.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -95,7 +94,6 @@ Ten pakiet zawiera modu³ rlocate dla j±dra Linuksa SMP.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
 %if %{with userspace}

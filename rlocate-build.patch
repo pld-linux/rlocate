@@ -42,3 +42,27 @@
  EXTRA_DIST = rlocate.cron debian rlocate-scripts autogen.sh \
               contrib install-cron.sh.in ChangeLog.slocate
  
+--- ./configure.ac~	2005-05-19 13:46:39.000000000 +0300
++++ ./configure.ac	2005-05-21 15:49:18.000000000 +0300
+@@ -30,11 +30,7 @@
+ # rlocate
+ #
+ AC_ENABLE_UPDATES
+-AC_PATH_KERNEL_SOURCE
+-AC_PATH_MODULE
+ AC_SANDBOXED
+-AC_MAJOR_NUMBER
+-AC_PATH_DEV
+ AC_CHECK_PERL
+ 
+ # Check if we are on a FreeBSD system
+--- ./configure.ac~	2005-05-21 18:19:01.000000000 +0300
++++ ./configure.ac	2005-05-21 18:19:26.000000000 +0300
+@@ -87,7 +87,6 @@
+ 
+ AC_CONFIG_FILES([Makefile
+           rlocate-daemon/Makefile
+-          rlocate-module/Makefile
+           doc/Makefile
+           doc/man/Makefile
+           rlocate-scripts/rlocate-checkpoint
