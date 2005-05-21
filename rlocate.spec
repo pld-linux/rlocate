@@ -110,7 +110,7 @@ Ten pakiet zawiera modu³ rlocate dla j±dra Linuksa SMP.
 
 %if %{with kernel}
 
-%if %{with dist_kernel}
+%if %{without dist_kernel}
 cat 2>&1 <<'EOF'
 WARNING:
 - CONFIG_SECURITY must be enabled in the kernel config,
