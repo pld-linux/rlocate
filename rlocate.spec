@@ -1,8 +1,9 @@
 #
 # TODO:
 # - cleanups, fix build, test... everything...
-# - device: /dev/rlocate
-# - updatedb manual conflicts with slocate
+# - device: /dev/rlocate (added to module package, but it should be probably in dev?)
+# - conflicts: updatedb manual with slocate
+# - conflicts: rlocate gid with slocate
 # - without kernel -> userspace still checks kernel parameters
 #
 # Conditional build:
@@ -16,12 +17,13 @@ Summary:	Finds files on a system via a central database
 Summary(pl):	Szukanie plików w systemie poprzez centraln± bazê danych
 Name:		rlocate
 Version:	0.2.4
-%define		_rel	0.2
+%define		_rel	0.12
 Release:	%{_rel}
 License:	GPL
 Group:		Base
 Source0:	http://dl.sourceforge.net/rlocate/%{name}-%{version}.tar.gz
 # Source0-md5:	744be608526d1e4572ed5287ce6699ce
+Patch0:		%{name}-build.patch
 URL:		http://rlocate.sourceforge.net/
 %if %{with kernel} && %{with dist_kernel}
 BuildRequires:	kernel-module-build >= 2.6
@@ -91,12 +93,19 @@ Ten pakiet zawiera modu³ rlocate dla j±dra Linuksa SMP.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %if %{with userspace}
-%configure
-%{__make} -C rlocate-daemon
-%{__make} -C doc
+%{__libtoolize}
+%{__aclocal} -I m4
+%{__autoconf}
+%{__autoheader}
+%{__automake}
+%configure \
+	--localstatedir=/var/lib
+
+%{__make}
 %endif
 
 %if %{with kernel}
@@ -135,15 +144,12 @@ cd ..
 rm -rf $RPM_BUILD_ROOT
 
 %if %{with userspace}
-%{__make} -C rlocate-daemon install \
-	DESTDIR=$RPM_BUILD_ROOT
-%{__make} -C doc install \
+%{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/cron.daily,/var/lib/rlocate}
-
-ln -sf rlocate $RPM_BUILD_ROOT%{_bindir}/locate
-ln -sf rlocate $RPM_BUILD_ROOT%{_bindir}/updatedb
+install -d $RPM_BUILD_ROOT{/var/lib/rlocate,%{_sysconfdir}/%{name}}
+install debian/updatedb.conf $RPM_BUILD_ROOT%{_sysconfdir}
+> $RPM_BUILD_ROOT/%{_sysconfdir}/%{name}/module.cfg
 %endif
 
 %if %{with kernel}
@@ -156,6 +162,7 @@ install rlocate-smp.ko \
 	$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/misc/rlocate.ko
 %endif
 cd ..
+install -d $RPM_BUILD_ROOT/dev
 %endif
 
 %clean
@@ -178,18 +185,33 @@ fi
 %files -n kernel-misc-%{name}
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/*.ko*
+%dev(c,254,0) /dev/rlocate
 
 %if %{with smp} && %{with dist_kernel}
 %files -n kernel-smp-misc-%{name}
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}smp/misc/*.ko*
+%dev(c,254,0) /dev/rlocate
 %endif
 %endif
 
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%attr(2755,root,slocate) %{_sbindir}/rlocated
+%attr(700,root,root) %dir %{_sysconfdir}/%{name}
+%attr(0,root,root) %ghost %{_sysconfdir}/%{name}/module.cfg
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/updatedb.conf
+%attr(755,root,root) /etc/cron.daily/rlocate
+
+%attr(755,root,root) %{_bindir}/rlocate
+%attr(755,root,root) %{_bindir}/updatedb
+%attr(755,root,root) %{_bindir}/locate
+%attr(2755,root,rlocate) %{_bindir}/rlocate-checkpoint
+
+%attr(2755,root,rlocate) %{_sbindir}/rlocated
+
 %{_mandir}/man1/rlocate*
 %{_mandir}/man1/updatedb.*
+
+%dir %attr(750,root,rlocate) /var/lib/rlocate
 %endif
