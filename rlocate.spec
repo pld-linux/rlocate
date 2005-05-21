@@ -1,6 +1,4 @@
-#
-# TODO:
-# - cleanups, fix build, test... everything...
+# TODO
 # - device: /dev/rlocate (added to module package, but it should be probably in dev?)
 # - conflicts: updatedb manual with slocate
 # - conflicts: rlocate gid with slocate
@@ -109,6 +107,16 @@ Ten pakiet zawiera modu³ rlocate dla j±dra Linuksa SMP.
 %endif
 
 %if %{with kernel}
+
+%if %{with dist_kernel}
+cat 2>&1 <<'EOF'
+WARNING:
+- CONFIG_SECURITY must be enabled in the kernel config,
+- Capabilities must be built as a module or disabled in the kernel config,
+for nondist kernel build to work.
+EOF
+%endif
+
 # kernel module(s)
 cd rlocate-module
 for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
