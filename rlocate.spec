@@ -2,6 +2,8 @@
 # TODO:
 # - cleanups, fix build, test... everything...
 # - device: /dev/rlocate
+# - updatedb manual conflicts with slocate
+# - without kernel -> userspace still checks kernel parameters
 #
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
@@ -14,20 +16,12 @@ Summary:	Finds files on a system via a central database
 Summary(pl):	Szukanie plików w systemie poprzez centraln± bazê danych
 Name:		rlocate
 Version:	0.2.4
-%define		_rel	0.1
+%define		_rel	0.2
 Release:	%{_rel}
 License:	GPL
 Group:		Base
 Source0:	http://dl.sourceforge.net/rlocate/%{name}-%{version}.tar.gz
 # Source0-md5:	744be608526d1e4572ed5287ce6699ce
-#Source1:	%{name}.cron
-#Source2:	%{name}-updatedb.conf
-#Patch0:		%{name}-segfault.patch
-#Patch1:		%{name}-manpage.patch
-#Patch2:		%{name}-wht.patch
-#Patch3:		%{name}-LOCATE_PATH.patch
-#Patch4:		%{name}-uchar.patch
-#Patch5:		%{name}-can-2003-0848.patch
 URL:		http://rlocate.sourceforge.net/
 %if %{with kernel} && %{with dist_kernel}
 BuildRequires:	kernel-module-build >= 2.6
@@ -39,6 +33,7 @@ Requires(pre):	/usr/sbin/groupadd
 Requires(postun):	/usr/sbin/groupdel
 Requires:	crondaemon
 Provides:	group(rlocate)
+Conflicts:	slocate
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -96,12 +91,6 @@ Ten pakiet zawiera modu³ rlocate dla j±dra Linuksa SMP.
 
 %prep
 %setup -q
-#%patch0 -p1
-#%patch1 -p1
-#%patch2 -p1
-#%patch3 -p1
-#%patch4 -p1
-#%patch5 -p1
 
 %build
 %if %{with userspace}
@@ -122,6 +111,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 	ln -sf %{_kernelsrcdir}/config-$cfg .config
 	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
 	ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+	ln -sf %{_kernelsrcdir}/scripts scripts
 	touch include/config/MARKER
 
 	echo "EXTRA_CFLAGS:= -DRL_VERSION=\\\"%{version}\\\" -DRLOCATE_UPDATES" > Makefile
@@ -152,15 +142,8 @@ rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT{%{_bindir},%{_mandir}/man1,/etc/cron.daily,/var/lib/rlocate}
 
-#install rlocate $RPM_BUILD_ROOT%{_bindir}
 ln -sf rlocate $RPM_BUILD_ROOT%{_bindir}/locate
 ln -sf rlocate $RPM_BUILD_ROOT%{_bindir}/updatedb
-
-#install doc/rlocate.1.linux $RPM_BUILD_ROOT%{_mandir}/man1/rlocate.1
-#install doc/updatedb.1 $RPM_BUILD_ROOT%{_mandir}/man1/updatedb.1
-#echo ".so rlocate.1" > $RPM_BUILD_ROOT%{_mandir}/man1/locate.1
-#install %{SOURCE1} $RPM_BUILD_ROOT/etc/cron.daily/rlocate
-#install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/updatedb.conf
 %endif
 
 %if %{with kernel}
@@ -209,13 +192,4 @@ fi
 %attr(2755,root,slocate) %{_sbindir}/rlocated
 %{_mandir}/man1/rlocate*
 %{_mandir}/man1/updatedb.*
-
-#doc AUTHORS ChangeLog README
-#attr(2755,root,rlocate) %{_bindir}/rlocate
-#attr(0755,root,root) %{_bindir}/locate
-#attr(0755,root,root) %{_bindir}/updatedb
-#attr(0750,root,root) /etc/cron.daily/rlocate
-#attr(0640,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/updatedb.conf
-#dir %attr(750,root,rlocate) /var/lib/rlocate
-#{_mandir}/man1/*
 %endif
