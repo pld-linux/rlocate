@@ -1,0 +1,6 @@
+- initial spec
+- this spec is totally broken
+- totally based on slocate.spec
+- need cleanup, fix build and many many more...
+- i added it to cvs because i can't fix %build section :(
+- release 0.0.1
