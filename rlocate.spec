@@ -13,13 +13,13 @@
 Summary:	Finds files on a system via a central database
 Summary(pl):	Szukanie plików w systemie poprzez centraln± bazê danych
 Name:		rlocate
-Version:	0.2.4
-%define		_rel	0.14
+Version:	0.3.0
+%define		_rel	0.1
 Release:	%{_rel}
 License:	GPL
 Group:		Base
 Source0:	http://dl.sourceforge.net/rlocate/%{name}-%{version}.tar.gz
-# Source0-md5:	744be608526d1e4572ed5287ce6699ce
+# Source0-md5:	bbf0ac8a402abd9efc3a8278553bc9ef
 Patch0:		%{name}-build.patch
 URL:		http://rlocate.sourceforge.net/
 BuildRequires:	autoconf
