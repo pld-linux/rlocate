@@ -9,12 +9,16 @@
 %bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace module
 %bcond_with	verbose		# verbose build (V=1)
+
+%if %{without kernel}
+%undefine	with_dist_kernel
+%endif
 #
 Summary:	Finds files on a system via a central database
 Summary(pl):	Szukanie plików w systemie poprzez centraln± bazê danych
 Name:		rlocate
 Version:	0.3.0
-%define		_rel	0.1
+%define		_rel	0.2
 Release:	%{_rel}
 License:	GPL
 Group:		Base
@@ -213,12 +217,13 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/updatedb.conf
 %attr(755,root,root) /etc/cron.daily/rlocate
 
-%attr(755,root,root) %{_bindir}/rlocate
-%attr(755,root,root) %{_bindir}/updatedb
-%attr(755,root,root) %{_bindir}/locate
+%attr(2755,root,root) %{_bindir}/rlocate
 %attr(2755,root,rlocate) %{_bindir}/rlocate-checkpoint
-
 %attr(2755,root,rlocate) %{_sbindir}/rlocated
+
+# symlinks
+%{_bindir}/updatedb
+%{_bindir}/locate
 
 %{_mandir}/man1/rlocate*
 %{_mandir}/man1/updatedb.*
