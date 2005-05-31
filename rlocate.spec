@@ -2,6 +2,7 @@
 # - device: /dev/rlocate (added to module package, but it should be probably in dev?)
 # - conflicts: updatedb manual with slocate
 # - conflicts: rlocate gid with slocate
+# - it needs rlocated daemon?
 #
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
@@ -217,7 +218,7 @@ fi
 %attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/updatedb.conf
 %attr(755,root,root) /etc/cron.daily/rlocate
 
-%attr(2755,root,root) %{_bindir}/rlocate
+%attr(2755,root,rlocate) %{_bindir}/rlocate
 %attr(2755,root,rlocate) %{_bindir}/rlocate-checkpoint
 %attr(2755,root,rlocate) %{_sbindir}/rlocated
 
