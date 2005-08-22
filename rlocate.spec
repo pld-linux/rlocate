@@ -159,7 +159,10 @@ cd ..
 %install
 rm -rf $RPM_BUILD_ROOT
 
+install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
+install -d $RPM_BUILD_ROOT/etc/cron.daily
 install contrib/rlocate.redhat $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+install rlocate.cron $RPM_BUILD_ROOT/etc/cron.daily/rlocate
 
 %if %{with userspace}
 %{__make} install \
@@ -219,9 +222,6 @@ fi
 %endif
 %endif
 
-%attr(754,root,root) /etc/rc.d/init.d/%{name}
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
-
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
@@ -243,3 +243,5 @@ fi
 
 %dir %attr(750,root,rlocate) /var/lib/rlocate
 %endif
+
+%attr(754,root,root) /etc/rc.d/init.d/%{name}
