@@ -193,17 +193,13 @@ rm -rf $RPM_BUILD_ROOT
 if [ ! -f /var/lib/rlocate/rlocate.db ]; then
 	echo 'Run "%{_bindir}/updatedb" if you want to make rlocate database immediately.'
 fi
+/sbin/chkconfig --add %{name}
+%service %{name} restart
 
 %postun
 if [ "$1" = "0" ]; then
 	%groupremove rlocate
-fi
-
-%post init
-/sbin/chkconfig --add %{name}
-%service %{name} restart
-
-%preun init
+else
 if [ "$1" = "0" ]; then
         %service -q %{name} stop
         /sbin/chkconfig --del %{name}
