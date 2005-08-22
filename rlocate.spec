@@ -24,7 +24,7 @@ Release:	%{_rel}
 License:	GPL
 Group:		Base
 Source0:	http://dl.sourceforge.net/rlocate/%{name}-%{version}.tar.gz
-# Source0-md5:	d65e350fe83480cc1db40912a0dfa87b
+# Source0-md5:	e3c8371a6659bf1e0d9d1fe02c0efe6d
 Patch0:		%{name}-build.patch
 URL:		http://rlocate.sourceforge.net/
 BuildRequires:	autoconf
