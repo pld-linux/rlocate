@@ -34,10 +34,11 @@ BuildRequires:	kernel-module-build >= 2.6
 %endif
 BuildRequires:	libtool
 BuildRequires:	perl-base
-BuildRequires:	rpmbuild(macros) >= 1.202
+BuildRequires:	rpmbuild(macros) >= 1.228
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(postun):	/usr/sbin/groupdel
+Requires(post,preun):	/sbin/chkconfig
 Requires:	crondaemon
 Provides:	group(rlocate)
 Conflicts:	slocate
@@ -158,6 +159,8 @@ cd ..
 %install
 rm -rf $RPM_BUILD_ROOT
 
+install contrib/rlocate.redhat $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+
 %if %{with userspace}
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
@@ -196,6 +199,16 @@ if [ "$1" = "0" ]; then
 	%groupremove rlocate
 fi
 
+%post init
+/sbin/chkconfig --add %{name}
+%service %{name} restart
+
+%preun init
+if [ "$1" = "0" ]; then
+        %service -q %{name} stop
+        /sbin/chkconfig --del %{name}
+fi
+
 %if %{with kernel}
 %files -n kernel-misc-%{name}
 %defattr(644,root,root,755)
@@ -209,6 +222,9 @@ fi
 %dev(c,254,0) /dev/rlocate
 %endif
 %endif
+
+%attr(754,root,root) /etc/rc.d/init.d/%{name}
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
 
 %if %{with userspace}
 %files
