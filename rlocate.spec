@@ -19,7 +19,7 @@ Summary:	Finds files on a system via a central database
 Summary(pl):	Szukanie plików w systemie poprzez centraln± bazê danych
 Name:		rlocate
 Version:	0.3.2
-%define		_rel	0.1
+%define		_rel	0.2
 Release:	%{_rel}
 License:	GPL
 Group:		Base
