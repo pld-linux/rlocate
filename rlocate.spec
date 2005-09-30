@@ -213,7 +213,6 @@ fi
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/misc/*.ko*
 %dev(c,254,0) /dev/rlocate
-%endif
 
 %if %{with smp} && %{with dist_kernel}
 %files -n kernel-smp-misc-%{name}
