@@ -18,13 +18,13 @@
 Summary:	Finds files on a system via a central database
 Summary(pl):	Szukanie plików w systemie poprzez centraln± bazê danych
 Name:		rlocate
-Version:	0.3.3
+Version:	0.4.1
 %define		_rel	0.1
 Release:	%{_rel}
 License:	GPL
 Group:		Base
 Source0:    http://dl.sourceforge.net/rlocate/%{name}-%{version}.tar.gz
-# Source0-md5:	ec08bea10ff51cb796280a61f9ab4ff2
+# Source0-md5:	d8a53d1ae0e36157bd43a989fa9cb28d
 Patch0:		%{name}-build.patch
 URL:		http://rlocate.sourceforge.net/
 BuildRequires:	autoconf
@@ -112,6 +112,7 @@ Ten pakiet zawiera modu³ rlocate dla j±dra Linuksa SMP.
 	--localstatedir=/var/lib
 
 %{__make}
+%{__make} -C rlocate-daemon
 %endif
 
 %if %{with kernel}
@@ -161,8 +162,14 @@ rm -rf $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
 install -d $RPM_BUILD_ROOT/etc/cron.daily
+install -d $RPM_BUILD_ROOT%{_sbindir}
+install -d $RPM_BUILD_ROOT%{_bindir}
+install -d $RPM_BUILD_ROOT%{_mandir}/man1
 install contrib/rlocate.redhat $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install rlocate.cron $RPM_BUILD_ROOT/etc/cron.daily/rlocate
+install rlocate-daemon/rlocated $RPM_BUILD_ROOT%{_sbindir}/rlocated
+install rlocate-scripts/rlocate-checkpoint $RPM_BUILD_ROOT%{_bindir}/rlocate-checkpoint
+install doc/man/{rlocate,rlocated,rlocate-checkpoint,updatedb}.1 $RPM_BUILD_ROOT%{_mandir}/man1
 
 %if %{with userspace}
 %{__make} install \
@@ -240,6 +247,7 @@ fi
 
 %{_mandir}/man1/rlocate*
 %{_mandir}/man1/updatedb.*
+%{_mandir}/man1/rlocate-checkpoint.*
 
 %dir %attr(750,root,rlocate) /var/lib/rlocate
 %endif
