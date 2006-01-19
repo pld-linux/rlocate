@@ -1,50 +1,30 @@
---- ./rlocate-scripts/Makefile.am~	2005-05-19 13:46:39.000000000 +0300
-+++ ./rlocate-scripts/Makefile.am	2005-05-21 15:41:38.000000000 +0300
-@@ -17,13 +17,6 @@
- 	rm $(srcdir)/rlocate-checkpoint.temp
- 
- install-exec-hook:
--if FREEBSD
--	-/usr/sbin/pw groupadd $(rlocate)
--else
--	-/usr/sbin/groupadd $(rlocate)
--endif
--	chown root:$(rlocate) $(DESTDIR)$(bindir)/rlocate-checkpoint
--	chmod 2755 $(DESTDIR)$(bindir)/rlocate-checkpoint
- 
- uninstall-hook:
- if FREEBSD
---- rlocate-0.2.4/Makefile.am~	2005-05-19 13:46:39.000000000 +0300
-+++ rlocate-0.2.4/Makefile.am	2005-05-21 16:01:27.000000000 +0300
-@@ -41,12 +41,8 @@
- # 	-/usr/sbin/groupadd rlocate
- # endif	
- 	$(INSTALL) -d $(RLOCATE_DB_DIR)
--	chown root:$(rlocate) $(DESTDIR)$(bindir)/$(rlocate)
--	chown root:$(rlocate) $(RLOCATE_DB_DIR)
--	chmod 2755 $(DESTDIR)$(bindir)/$(rlocate)
--	chmod 0750 $(RLOCATE_DB_DIR)
--	-$(LN_S) -f $(DESTDIR)$(bindir)/$(rlocate) $(DESTDIR)$(bindir)/$(updatedb)
--	-$(LN_S) -f $(DESTDIR)$(bindir)/$(rlocate) $(DESTDIR)$(bindir)/$(locate)
-+	-$(LN_S) -f $(rlocate) $(DESTDIR)$(bindir)/$(updatedb)
-+	-$(LN_S) -f $(rlocate) $(DESTDIR)$(bindir)/$(locate)
- if CRON
- 	$(mkinstalldirs) $(DESTDIR)/etc/cron.daily/
- 	sed \
---- rlocate-0.2.4/Makefile.am~	2005-05-21 16:01:27.000000000 +0300
-+++ rlocate-0.2.4/Makefile.am	2005-05-21 16:02:19.000000000 +0300
+diff -ur rlocate-0.4.1/Makefile.am rlocate-0.4.1.new/Makefile.am
+--- rlocate-0.4.1/Makefile.am	2006-01-19 09:04:52.000000000 +0000
++++ rlocate-0.4.1.new/Makefile.am	2006-01-19 09:58:36.000000000 +0000
 @@ -22,7 +22,7 @@
  bin_PROGRAMS = rlocate
  rlocate_SOURCES = pidfile.h pidfile.c main.c link.c misc.c link.h misc.h \
                    rlocate.h rlocate.c
 -SUBDIRS = doc rlocate-daemon rlocate-module rlocate-scripts
-+SUBDIRS = doc rlocate-daemon rlocate-scripts
++UBDIRS = doc rlocate-daemon rlocate-scripts
  EXTRA_DIST = rlocate.cron debian rlocate-scripts autogen.sh \
               contrib install-cron.sh.in ChangeLog.slocate
  
---- ./configure.ac~	2005-05-19 13:46:39.000000000 +0300
-+++ ./configure.ac	2005-05-21 15:49:18.000000000 +0300
-@@ -30,11 +30,7 @@
+@@ -41,10 +41,6 @@
+ # 	-/usr/sbin/groupadd rlocate
+ # endif	
+ 	$(INSTALL) -d $(RLOCATE_DB_DIR)
+-	chown root:$(rlocate_group) $(DESTDIR)$(bindir)/$(rlocate)
+-	chown root:$(rlocate_group) $(RLOCATE_DB_DIR)
+-	chmod 2755 $(DESTDIR)$(bindir)/$(rlocate)
+-	chmod 0750 $(RLOCATE_DB_DIR)
+ 	-$(LN_S) -f $(rlocate) $(DESTDIR)$(bindir)/$(updatedb)
+ 	-$(LN_S) -f $(rlocate) $(DESTDIR)$(bindir)/$(locate)
+ if CRON
+diff -ur rlocate-0.4.1/configure.ac rlocate-0.4.1.new/configure.ac
+--- rlocate-0.4.1/configure.ac	2006-01-19 09:04:52.000000000 +0000
++++ rlocate-0.4.1.new/configure.ac	2006-01-19 09:59:11.000000000 +0000
+@@ -30,12 +30,8 @@
  # rlocate
  #
  AC_ENABLE_UPDATES
@@ -52,13 +32,12 @@
 -AC_PATH_MODULE
  AC_SANDBOXED
 -AC_MAJOR_NUMBER
+ AC_RLOCATE_GROUP
 -AC_PATH_DEV
  AC_CHECK_PERL
  
  # Check if we are on a FreeBSD system
---- ./configure.ac~	2005-05-21 18:19:01.000000000 +0300
-+++ ./configure.ac	2005-05-21 18:19:26.000000000 +0300
-@@ -87,7 +87,6 @@
+@@ -92,7 +88,6 @@
  
  AC_CONFIG_FILES([Makefile
            rlocate-daemon/Makefile
@@ -66,3 +45,21 @@
            doc/Makefile
            doc/man/Makefile
            rlocate-scripts/rlocate-checkpoint
+diff -ur rlocate-0.4.1/rlocate-scripts/Makefile.am rlocate-0.4.1.new/rlocate-scripts/Makefile.am
+--- rlocate-0.4.1/rlocate-scripts/Makefile.am	2006-01-19 09:04:52.000000000 +0000
++++ rlocate-0.4.1.new/rlocate-scripts/Makefile.am	2006-01-19 09:57:37.000000000 +0000
+@@ -17,14 +17,6 @@
+ 	rm $(srcdir)/rlocate-checkpoint.temp
+ 
+ install-exec-hook:
+-if FREEBSD
+-	-/usr/sbin/pw groupadd $(rlocate_group)
+-else
+-	-/usr/sbin/groupadd $(rlocate_group)
+-endif
+-	chown root:$(rlocate_group) $(DESTDIR)$(bindir)/rlocate-checkpoint
+-	chmod 2755 $(DESTDIR)$(bindir)/rlocate-checkpoint
+-
+ uninstall-hook:
+ if FREEBSD
+ 	-/usr/sbin/pw groupdel $(rlocate_group)
