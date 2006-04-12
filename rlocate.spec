@@ -15,30 +15,30 @@
 %undefine	with_dist_kernel
 %endif
 #
+%define		_rel	0.1
 Summary:	Finds files on a system via a central database
 Summary(pl):	Szukanie plików w systemie poprzez centraln± bazê danych
 Name:		rlocate
 Version:	0.4.1
-%define		_rel	0.1
 Release:	%{_rel}
 License:	GPL
 Group:		Base
-Source0:    http://dl.sourceforge.net/rlocate/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/rlocate/%{name}-%{version}.tar.gz
 # Source0-md5:	d8a53d1ae0e36157bd43a989fa9cb28d
 Patch0:		%{name}-build.patch
 URL:		http://rlocate.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
 %if %{with kernel} && %{with dist_kernel}
-BuildRequires:	kernel-module-build >= 2.6
+BuildRequires:	kernel-module-build >= 3:2.6
 %endif
 BuildRequires:	libtool
 BuildRequires:	perl-base
 BuildRequires:	rpmbuild(macros) >= 1.228
+Requires(post,preun):	/sbin/chkconfig
+Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
-Requires(postun):	/usr/sbin/groupdel
-Requires(post,preun):	/sbin/chkconfig
 Requires:	crondaemon
 Provides:	group(rlocate)
 Conflicts:	slocate
@@ -242,8 +242,8 @@ fi
 %attr(2755,root,rlocate) %{_sbindir}/rlocated
 
 # symlinks
-%{_bindir}/updatedb
-%{_bindir}/locate
+%attr(755,root,root) %{_bindir}/updatedb
+%attr(755,root,root) %{_bindir}/locate
 
 %{_mandir}/man1/rlocate*
 %{_mandir}/man1/updatedb.*
