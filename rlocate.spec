@@ -177,7 +177,7 @@ install doc/man/{rlocate,rlocated,rlocate-checkpoint,updatedb}.1 $RPM_BUILD_ROOT
 
 install -d $RPM_BUILD_ROOT{/var/lib/rlocate,%{_sysconfdir}/%{name}}
 install debian/updatedb.conf $RPM_BUILD_ROOT%{_sysconfdir}
-> $RPM_BUILD_ROOT/%{_sysconfdir}/%{name}/module.cfg
+> $RPM_BUILD_ROOT%{_sysconfdir}/%{name}/module.cfg
 %endif
 
 %if %{with kernel}
