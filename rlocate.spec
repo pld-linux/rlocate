@@ -11,7 +11,7 @@
 %bcond_without	userspace	# don't build userspace module
 %bcond_with	verbose		# verbose build (V=1)
 
-%if %{without kernel}
+%if !%{with kernel}
 %undefine	with_dist_kernel
 %endif
 #
@@ -117,7 +117,7 @@ Ten pakiet zawiera modu³ rlocate dla j±dra Linuksa SMP.
 
 %if %{with kernel}
 
-%if %{without dist_kernel}
+%if !%{with dist_kernel}
 cat 2>&1 <<'EOF'
 WARNING:
 - CONFIG_SECURITY must be enabled in the kernel config,
