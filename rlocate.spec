@@ -17,7 +17,7 @@
 #
 %define		_rel	0.1
 Summary:	Finds files on a system via a central database
-Summary(pl.UTF-8):   Szukanie plików w systemie poprzez centralną bazę danych
+Summary(pl.UTF-8):	Szukanie plików w systemie poprzez centralną bazę danych
 Name:		rlocate
 Version:	0.4.1
 Release:	%{_rel}
@@ -65,7 +65,7 @@ Linuksa 2.6.
 
 %package -n kernel-misc-%{name}
 Summary:	rlocate Linux module
-Summary(pl.UTF-8):   Moduł rlocate dla Linuksa
+Summary(pl.UTF-8):	Moduł rlocate dla Linuksa
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -82,7 +82,7 @@ Ten pakiet zawiera moduł rlocate dla jądra Linuksa.
 
 %package -n kernel-smp-misc-%{name}
 Summary:	rlocate Linux SMP module
-Summary(pl.UTF-8):   Moduł rlocate dla Linuksa SMP
+Summary(pl.UTF-8):	Moduł rlocate dla Linuksa SMP
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
