@@ -17,7 +17,7 @@
 #
 %define		_rel	0.1
 Summary:	Finds files on a system via a central database
-Summary(pl):	Szukanie plików w systemie poprzez centraln± bazê danych
+Summary(pl.UTF-8):   Szukanie plikÃ³w w systemie poprzez centralnÄ… bazÄ™ danych
 Name:		rlocate
 Version:	0.4.1
 Release:	%{_rel}
@@ -53,19 +53,19 @@ a diff database that gets updated whenever a new file is created. This
 is accomplished with rlocate kernel module and daemon. The rlocate
 kernel module can be compiled only with Linux 2.6 kernels.
 
-%description -l pl
-rlocate to implementacja polecenia locate bêd±ca zawsze aktualna. Baza
-danych u¿ywana przez oryginalne polecenie locate jest zwykle
-uaktualniana raz dziennie, wiêc nowszych plików nie mo¿na znale¼æ w
-ten sposób. Zachowanie rlocate jest takie samo jak slocate, ale
-rlocate dodatkowo utrzymuje bazê danych ró¿nic uaktualnian± przy
-tworzeniu ka¿dego nowego pliku. Jest to osi±gniête przy u¿yciu modu³u
-j±dra i demona rlocate. Modu³ j±dra mo¿na skompilowaæ tylko na j±drach
+%description -l pl.UTF-8
+rlocate to implementacja polecenia locate bÄ™dÄ…ca zawsze aktualna. Baza
+danych uÅ¼ywana przez oryginalne polecenie locate jest zwykle
+uaktualniana raz dziennie, wiÄ™c nowszych plikÃ³w nie moÅ¼na znaleÅºÄ‡ w
+ten sposÃ³b. Zachowanie rlocate jest takie samo jak slocate, ale
+rlocate dodatkowo utrzymuje bazÄ™ danych rÃ³Å¼nic uaktualnianÄ… przy
+tworzeniu kaÅ¼dego nowego pliku. Jest to osiÄ…gniÄ™te przy uÅ¼yciu moduÅ‚u
+jÄ…dra i demona rlocate. ModuÅ‚ jÄ…dra moÅ¼na skompilowaÄ‡ tylko na jÄ…drach
 Linuksa 2.6.
 
 %package -n kernel-misc-%{name}
 Summary:	rlocate Linux module
-Summary(pl):	Modu³ rlocate dla Linuksa
+Summary(pl.UTF-8):   ModuÅ‚ rlocate dla Linuksa
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -77,12 +77,12 @@ Requires(postun):	%releq_kernel_up
 %description -n kernel-misc-%{name}
 This package contains rlocate Linux module.
 
-%description -n kernel-misc-%{name} -l pl
-Ten pakiet zawiera modu³ rlocate dla j±dra Linuksa.
+%description -n kernel-misc-%{name} -l pl.UTF-8
+Ten pakiet zawiera moduÅ‚ rlocate dla jÄ…dra Linuksa.
 
 %package -n kernel-smp-misc-%{name}
 Summary:	rlocate Linux SMP module
-Summary(pl):	Modu³ rlocate dla Linuksa SMP
+Summary(pl.UTF-8):   ModuÅ‚ rlocate dla Linuksa SMP
 Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
@@ -94,8 +94,8 @@ Requires(postun):	%releq_kernel_smp
 %description -n kernel-smp-misc-%{name}
 This package contains rlocate Linux SMP module.
 
-%description -n kernel-smp-misc-%{name} -l pl
-Ten pakiet zawiera modu³ rlocate dla j±dra Linuksa SMP.
+%description -n kernel-smp-misc-%{name} -l pl.UTF-8
+Ten pakiet zawiera moduÅ‚ rlocate dla jÄ…dra Linuksa SMP.
 
 %prep
 %setup -q
