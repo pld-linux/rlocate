@@ -1,0 +1,11 @@
+--- rlocate-0.5.6/src/rlocate.c.orig	2016-09-24 20:34:29.666512273 +0200
++++ rlocate-0.5.6/src/rlocate.c	2016-09-24 20:34:33.569845572 +0200
+@@ -349,7 +349,7 @@
+         LOCK_FILE = get_lock_name(g_data->output_db);
+ 
+         fl.l_pid = getpid();
+-        if ( (LOCK_FD = open(LOCK_FILE, O_CREAT|O_WRONLY)) < 0 ) {
++        if ( (LOCK_FD = open(LOCK_FILE, O_CREAT|O_WRONLY, 0600)) < 0 ) {
+ 		printf("error: cannot open lock file: %s: %s\n", 
+ 			LOCK_FILE, strerror(errno));
+ 		LOCK_FD = -1;

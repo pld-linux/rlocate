@@ -1,30 +1,28 @@
-diff -ur rlocate-0.4.1/Makefile.am rlocate-0.4.1.new/Makefile.am
---- rlocate-0.4.1/Makefile.am	2006-01-19 09:04:52.000000000 +0000
-+++ rlocate-0.4.1.new/Makefile.am	2006-01-19 09:58:36.000000000 +0000
-@@ -22,7 +22,7 @@
- bin_PROGRAMS = rlocate
- rlocate_SOURCES = pidfile.h pidfile.c main.c link.c misc.c link.h misc.h \
-                   rlocate.h rlocate.c
--SUBDIRS = doc rlocate-daemon rlocate-module rlocate-scripts
-+UBDIRS = doc rlocate-daemon rlocate-scripts
- EXTRA_DIST = rlocate.cron debian rlocate-scripts autogen.sh \
-              contrib install-cron.sh.in ChangeLog.slocate
+--- rlocate-0.5.6/src/Makefile.am.orig	2007-08-15 10:57:33.000000000 +0200
++++ rlocate-0.5.6/src/Makefile.am	2016-09-24 20:24:27.153185828 +0200
+@@ -28,7 +28,7 @@
+ rlocate_SOURCES = pidfile.h pidfile.c slocate.c slocate.h \
+ 		  rlocate.h rlocate.c cmds.c cmds.h conf.c conf.h utils.c \
+ 	   	  utils.h
+-SUBDIRS = rlocate-daemon rlocate-module rlocate-scripts
++SUBDIRS = rlocate-daemon rlocate-scripts
+ EXTRA_DIST = rlocate.cron rlocate-scripts install-cron.sh.in
  
-@@ -41,10 +41,6 @@
- # 	-/usr/sbin/groupadd rlocate
- # endif	
+ INSTALL = install -c
+@@ -36,10 +36,6 @@
+ 
+ install-exec-hook:
  	$(INSTALL) -d $(RLOCATE_DB_DIR)
--	chown root:$(rlocate_group) $(DESTDIR)$(bindir)/$(rlocate)
--	chown root:$(rlocate_group) $(RLOCATE_DB_DIR)
+-	chown $(root_uid):$(rlocate_group) $(DESTDIR)$(bindir)/$(rlocate)
+-	chown $(root_uid):$(rlocate_group) $(RLOCATE_DB_DIR)
 -	chmod 2755 $(DESTDIR)$(bindir)/$(rlocate)
 -	chmod 0750 $(RLOCATE_DB_DIR)
  	-$(LN_S) -f $(rlocate) $(DESTDIR)$(bindir)/$(updatedb)
  	-$(LN_S) -f $(rlocate) $(DESTDIR)$(bindir)/$(locate)
  if CRON
-diff -ur rlocate-0.4.1/configure.ac rlocate-0.4.1.new/configure.ac
---- rlocate-0.4.1/configure.ac	2006-01-19 09:04:52.000000000 +0000
-+++ rlocate-0.4.1.new/configure.ac	2006-01-19 09:59:11.000000000 +0000
-@@ -30,12 +30,8 @@
+--- rlocate-0.5.6/configure.ac.orig	2016-09-24 20:17:46.859857059 +0200
++++ rlocate-0.5.6/configure.ac	2016-09-24 20:29:03.723182677 +0200
+@@ -30,13 +30,9 @@
  # rlocate
  #
  AC_ENABLE_UPDATES
@@ -33,33 +31,29 @@ diff -ur rlocate-0.4.1/configure.ac rlocate-0.4.1.new/configure.ac
  AC_SANDBOXED
 -AC_MAJOR_NUMBER
  AC_RLOCATE_GROUP
+ AC_UPDATEDB_CONF
 -AC_PATH_DEV
+ AC_PATH_STATUS
  AC_CHECK_PERL
  
- # Check if we are on a FreeBSD system
-@@ -92,7 +88,6 @@
- 
+@@ -81,7 +77,6 @@
  AC_CONFIG_FILES([Makefile
-           rlocate-daemon/Makefile
--          rlocate-module/Makefile
+           src/Makefile
+           src/rlocate-daemon/Makefile
+-          src/rlocate-module/Makefile
+           src/rlocate-scripts/rlocate-checkpoint
+           src/rlocate-scripts/Makefile
            doc/Makefile
-           doc/man/Makefile
-           rlocate-scripts/rlocate-checkpoint
-diff -ur rlocate-0.4.1/rlocate-scripts/Makefile.am rlocate-0.4.1.new/rlocate-scripts/Makefile.am
---- rlocate-0.4.1/rlocate-scripts/Makefile.am	2006-01-19 09:04:52.000000000 +0000
-+++ rlocate-0.4.1.new/rlocate-scripts/Makefile.am	2006-01-19 09:57:37.000000000 +0000
-@@ -17,14 +17,6 @@
+--- rlocate-0.5.6/src/rlocate-scripts/Makefile.am.orig	2016-09-24 20:29:26.019849182 +0200
++++ rlocate-0.5.6/src/rlocate-scripts/Makefile.am	2016-09-24 20:31:18.149848053 +0200
+@@ -17,10 +17,3 @@
+ 	cp $(srcdir)/rlocate-checkpoint.temp $(srcdir)/rlocate-checkpoint
  	rm $(srcdir)/rlocate-checkpoint.temp
  
- install-exec-hook:
--if FREEBSD
--	-/usr/sbin/pw groupadd $(rlocate_group)
--else
+-install-exec-hook:
 -	-/usr/sbin/groupadd $(rlocate_group)
--endif
--	chown root:$(rlocate_group) $(DESTDIR)$(bindir)/rlocate-checkpoint
+-	chown $(root_uid):$(rlocate_group) $(DESTDIR)$(bindir)/rlocate-checkpoint
 -	chmod 2755 $(DESTDIR)$(bindir)/rlocate-checkpoint
 -
- uninstall-hook:
- if FREEBSD
- 	-/usr/sbin/pw groupdel $(rlocate_group)
+-uninstall-hook:
+-	-/usr/sbin/groupdel $(rlocate_group)
