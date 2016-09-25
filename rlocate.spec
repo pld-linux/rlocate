@@ -3,6 +3,7 @@
 # - device: installed with static major, module creates as dynamic => use udev
 # - should provide something like virtual(locate), obsolete other implementations
 # - conflicts: rlocate gid with slocate
+# - pldize initscript
 #
 # Conditional build:
 %bcond_without	kernel		# don't build kernel modules
@@ -40,7 +41,7 @@ Conflicts:	slocate
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-rlocate is an implementation of the ``locate'' command that is always
+rlocate is an implementation of the locate command that is always
 up-to-date. The database that the original locate uses is usually
 updated only once a day, so newer files cannot be located right away.
 The behavior of rlocate is the same as slocate, but it also maintains
@@ -128,13 +129,15 @@ fi
 /sbin/chkconfig --add %{name}
 %service %{name} restart
 
+%preun
+if [ "$1" = "0" ]; then
+	%service -q %{name} stop
+	/sbin/chkconfig --del %{name}
+fi
+
 %postun
 if [ "$1" = "0" ]; then
 	%groupremove rlocate
-else
-if [ "$1" = "0" ]; then
-        %service -q %{name} stop
-        /sbin/chkconfig --del %{name}
 fi
 
 %if %{with userspace}
